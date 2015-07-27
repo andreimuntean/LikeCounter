@@ -1,4 +1,4 @@
-# Ranks a user's friends based on the number of likes they gave it.
+# Ranks a user's friends based on how many of its posts they liked.
 #
 # Author: Andrei Muntean
 
@@ -32,7 +32,7 @@ class LikeCounter
     loop do
       posts.each do |post|
         # Skips posts which have no likes.
-        next unless post.key? "likes"
+        next unless post.key?("likes")
 
         # Gets this post's likes.
         likes = post["likes"]["data"]
@@ -54,7 +54,7 @@ class LikeCounter
       end
     end
 
-    # Returns the result in descending order based on the number of likes.
+    # Returns the users in descending order based on their number of likes.
     total_likes.sort_by { |name, like_count| like_count }.reverse
   end
 end
@@ -68,14 +68,14 @@ if __FILE__ == $0
   like_counter = LikeCounter.new(ACCESS_TOKEN)
   friend_likes = like_counter.get_friend_likes()
 
-  # Outputs the results at the specified path.
-  path = ARGV.length == 1 ? ARGV[0] : "output.txt"
-  output = ""
-  rank = 0
+  # Determines the number of lines to output.
+  count = ARGV.length == 1 && ARGV[0].to_i > 0 ? ARGV[0].to_i : 100
+  index = 0
 
+  # Outputs the results.
   friend_likes.each do |name, like_count|
-    output << "#{rank += 1}. #{name}: #{like_count} likes.\n"
-  end
+    puts "#{index += 1}. #{name}: #{like_count} likes.\n"
 
-  File.write(path, output)
+    break unless index < count
+  end
 end
